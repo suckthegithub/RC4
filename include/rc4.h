@@ -8,7 +8,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#define RC4_TABLE_LENGTH 512
+#define RC4_TABLE_LENGTH 256
 
 void rc4_encrypt(unsigned char* schedule, unsigned char* data, unsigned char* dest, unsigned int length);
 void rc4_decrypt(unsigned char* schedule, unsigned char* data, unsigned char* dest, unsigned int length);
