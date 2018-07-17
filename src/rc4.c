@@ -1,62 +1,76 @@
 //  rc4.c
 //
-//  Created by Smith on 2017/07/31.
-//  Copyright © 2017 Smith. All rights reserved.
 
 #include "rc4.h"
 
-#include <stdlib.h>
-#include <stdio.h>
 
-void rc4_encrypt(unsigned char* schedule, unsigned char* data, unsigned char* dest, unsigned int length)
+
+void rc4_init(unsigned char*s, unsigned char*key, unsigned long Len)
+
 {
-    unsigned char* temp = (unsigned char*)malloc(length);
 
-    int i, j = 0;
-    for (int i = 0; i < length; i++) {
-        i = (i + 1) % RC4_TABLE_LENGTH;
-        j = (j + schedule[i]) % RC4_TABLE_LENGTH;
-        unsigned char _i = schedule[i];
-        schedule[i] = schedule[j];
-        schedule[j] = _i;
-        temp[i] = schedule[(schedule[i] + schedule[j]) % RC4_TABLE_LENGTH];
-    }
-    for (int i = 0; i < length; i++) {
-        dest[i] = data[i] ^ temp[i];
-    }
+	int i = 0, j = 0;
+
+	char k[256] = { 0 };
+
+	unsigned char tmp = 0;
+
+	for (i = 0; i<256; i++)
+
+	{
+
+		s[i] = i;
+
+		k[i] = key[i%Len];
+
+	}
+
+	for (i = 0; i<256; i++)
+
+	{
+
+		j = (j + s[i] + k[i]) % 256;
+
+		tmp = s[i];
+
+		s[i] = s[j];
+
+		s[j] = tmp;
+
+	}
+
 }
 
-void rc4_decrypt(unsigned char* schedule, unsigned char* data, unsigned char* dest, unsigned int length)
+
+
+
+void rc4_crypt(unsigned char*s, unsigned char*Data, unsigned long Len)
 {
-    unsigned char* temp = (unsigned char*)malloc(length);
 
-    int i, j = 0;
-    for (int i = 0; i < length; i++) {
-        i = (i + 1) % RC4_TABLE_LENGTH;
-        j = (j + schedule[i]) % RC4_TABLE_LENGTH;
-        unsigned char _i = schedule[i];
-        schedule[i] = schedule[j];
-        schedule[j] = _i;
-        temp[i] = schedule[(schedule[i] + schedule[j]) % RC4_TABLE_LENGTH];
-    }
-    for (int i = 0; i < length; i++) {
-        dest[i] = data[i] ^ temp[i];
-    }
-}
+	int i = 0, j = 0, t = 0;
 
+	unsigned long k = 0;
 
-void rc4_generate_key(unsigned char* schedule, const unsigned char* key, int key_length)
-{
-    for (int i = 0; i <= 0xff; i++)
-        schedule[i] = i;
+	unsigned char tmp;
 
-    int j = 0;
-    for (int i = 0; i <= 0xff; i++) {
-        // this is RC4
-        j = (j + schedule[i] + key[i % key_length]) % RC4_TABLE_LENGTH;
+	for (k = 0; k<Len; k++)
 
-        unsigned char _j = schedule[j];
-        schedule[j] = schedule[i];
-        schedule[i] = _j;
-    }
+	{
+
+		i = (i + 1) % 256;
+
+		j = (j + s[i]) % 256;
+
+		tmp = s[i];
+
+		s[i] = s[j];
+
+		s[j] = tmp;
+
+		t = (s[i] + s[j]) % 256;
+
+		Data[k] ^= s[t];
+
+	}
+
 }
